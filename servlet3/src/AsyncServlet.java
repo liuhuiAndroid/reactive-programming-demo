@@ -12,67 +12,39 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Servlet implementation class AsyncServlet
- */
-@WebServlet(asyncSupported = true, urlPatterns = { "/AsyncServlet" })
+@WebServlet(asyncSupported = true, urlPatterns = {"/AsyncServlet"})
 public class AsyncServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public AsyncServlet() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public AsyncServlet() {
+        super();
+    }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		long t1 = System.currentTimeMillis();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        long t1 = System.currentTimeMillis();
+        // 开启异步
+        AsyncContext asyncContext = request.startAsync();
+        // 执行业务代码
+        CompletableFuture.runAsync(() -> doSomeThing(asyncContext, asyncContext.getRequest(), asyncContext.getResponse()));
+        System.out.println("async use:" + (System.currentTimeMillis() - t1));
+    }
 
-		// 开启异步
-		AsyncContext asyncContext = request.startAsync();
+    private void doSomeThing(AsyncContext asyncContext, ServletRequest servletRequest, ServletResponse servletResponse) {
+        // 模拟耗时操作
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+        }
+        try {
+            servletResponse.getWriter().append("done");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 业务代码处理完毕, 通知结束
+        asyncContext.complete();
+    }
 
-		// 执行业务代码
-		CompletableFuture.runAsync(() -> doSomeThing(asyncContext,
-				asyncContext.getRequest(), asyncContext.getResponse()));
-
-		System.out.println("async use:" + (System.currentTimeMillis() - t1));
-	}
-
-	private void doSomeThing(AsyncContext asyncContext,
-			ServletRequest servletRequest, ServletResponse servletResponse) {
-
-		// 模拟耗时操作
-		try {
-			TimeUnit.SECONDS.sleep(5);
-		} catch (InterruptedException e) {
-		}
-
-		//
-		try {
-			servletResponse.getWriter().append("done");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		// 业务代码处理完毕, 通知结束
-		asyncContext.complete();
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
-
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+    }
 }

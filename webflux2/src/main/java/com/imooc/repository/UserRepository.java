@@ -22,4 +22,5 @@ public interface UserRepository extends ReactiveMongoRepository<User, String> {
 	
 	@Query("{'age':{ '$gte': 20, '$lte' : 30}}")
 	Flux<User> oldUser();
+
 }

@@ -140,7 +140,6 @@ public class CollectDemo {
 		Map<Grade, Long> gradesCount = students.stream().collect(Collectors
 				.groupingBy(Student::getGrade, Collectors.counting()));
 		MapUtils.verbosePrint(System.out, "班级学生个数列表", gradesCount);
-
 	}
 
 }

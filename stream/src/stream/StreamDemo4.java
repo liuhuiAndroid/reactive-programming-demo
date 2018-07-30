@@ -10,13 +10,15 @@ import java.util.stream.Stream;
 public class StreamDemo4 {
 
 	public static void main(String[] args) {
-		String str = "my name is 007";
+		String str = "my name is 01";
 
 		// 使用并行流
 		str.chars().parallel().forEach(i -> System.out.print((char) i));
 		System.out.println();
+
 		// 使用 forEachOrdered 保证顺序
 		str.chars().parallel().forEachOrdered(i -> System.out.print((char) i));
+		System.out.println();
 
 		// 收集到list
 		List<String> list = Stream.of(str.split(" "))

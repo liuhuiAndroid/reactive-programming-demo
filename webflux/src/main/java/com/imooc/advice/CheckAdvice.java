@@ -10,19 +10,21 @@ import com.imooc.exceptions.CheckException;
 
 /**
  * 异常处理切面
+ * @ControllerAdvice + @ExceptionHandler 全局处理 Controller 层异常
  */
+// @ControllerAdvice 注解定义全局异常处理类
 @ControllerAdvice
 public class CheckAdvice {
 
+	// @ExceptionHandler 注解声明异常处理方法
 	@ExceptionHandler(WebExchangeBindException.class)
-	public ResponseEntity<String> handleBindException(
-			WebExchangeBindException e) {
+	public ResponseEntity<String> handleBindException(WebExchangeBindException e) {
 		return new ResponseEntity<String>(toStr(e), HttpStatus.BAD_REQUEST);
 	}
-	
+
+	// @ExceptionHandler 注解声明异常处理方法
 	@ExceptionHandler(CheckException.class)
-	public ResponseEntity<String> handleCheckException(
-			CheckException e) {
+	public ResponseEntity<String> handleCheckException(CheckException e) {
 		return new ResponseEntity<String>(toStr(e), HttpStatus.BAD_REQUEST);
 	}
 

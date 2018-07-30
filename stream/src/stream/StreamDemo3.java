@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 public class StreamDemo3 {
 
 	public static void main(String[] args) {
-		String str = "my name is 007";
+		String str = "my name is 01";
 
 		// 把每个单词的长度调用出来
 		Stream.of(str.split(" ")).filter(s -> s.length() > 2)
@@ -26,7 +26,6 @@ public class StreamDemo3 {
 		// limit 使用, 主要用于无限流
 		new Random().ints().filter(i -> i > 100 && i < 1000).limit(10)
 				.forEach(System.out::println);
-
 	}
 
 }

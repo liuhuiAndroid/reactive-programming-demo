@@ -29,7 +29,6 @@ public class StreamDemo2 {
 
 		// 自己产生流
 		Stream.generate(() -> random.nextInt()).limit(20);
-
 	}
 
 }

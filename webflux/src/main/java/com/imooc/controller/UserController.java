@@ -2,6 +2,7 @@ package com.imooc.controller;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,118 +26,118 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/user")
 public class UserController {
 
-	private final UserRepository repository;
+    private final UserRepository repository;
 
-	public UserController(UserRepository repository) {
-		this.repository = repository;
-	}
+    // Spring建议”总是在您的bean中使用构造函数建立依赖注入。
+    // 使用构造器注入的方法，可以明确成员变量的加载顺序。
+    @Autowired
+    public UserController(UserRepository repository) {
+        this.repository = repository;
+    }
 
-	/**
-	 * 以数组形式一次性返回数据
-	 */
-	@GetMapping("/")
-	public Flux<User> getAll() {
-		return repository.findAll();
-	}
+    /**
+     * 以数组形式一次性返回数据
+     */
+    @GetMapping("/")
+    public Flux<User> getAll() {
+        return repository.findAll();
+    }
 
-	/**
-	 * 以SSE形式多次返回数据
-	 */
-	@GetMapping(value = "/stream/all", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	public Flux<User> streamGetAll() {
-		return repository.findAll();
-	}
+    /**
+     * 以SSE形式多次返回数据
+     */
+    @GetMapping(value = "/stream/all", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<User> streamGetAll() {
+        return repository.findAll();
+    }
 
-	/**
-	 * 新增数据
-	 */
-	@PostMapping("/")
-	public Mono<User> createUser(@Valid @RequestBody User user) {
-		// spring data jpa 里面, 新增和修改都是save. 有id是修改, id为空是新增
-		// 根据实际情况是否置空id
-		user.setId(null);
-		CheckUtil.checkName(user.getName());
-		return this.repository.save(user);
-	}
+    /**
+     * 新增数据
+     */
+    @PostMapping("/")
+    public Mono<User> createUser(@Valid @RequestBody User user) {
+        // spring data jpa 里面, 新增和修改都是save. 有id是修改, id为空是新增
+        // 根据实际情况是否置空id
+        user.setId(null);
+        CheckUtil.checkName(user.getName());
+        return this.repository.save(user);
+    }
 
-	/**
-	 * 根据id删除用户 存在的时候返回200, 不存在返回404
-	 */
-	@DeleteMapping("/{id}")
-	public Mono<ResponseEntity<Void>> deleteUser(
-			@PathVariable("id") String id) {
-		// deletebyID 没有返回值, 不能判断数据是否存在
-		// this.repository.deleteById(id)
-		return this.repository.findById(id)
-				// 当你要操作数据, 并返回一个Mono 这个时候使用flatMap
-				// 如果不操作数据, 只是转换数据, 使用map
-				.flatMap(user -> this.repository.delete(user).then(
-						Mono.just(new ResponseEntity<Void>(HttpStatus.OK))))
-				.defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-	}
+    /**
+     * 根据id删除用户 存在的时候返回200, 不存在返回404
+     */
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<Void>> deleteUser(@PathVariable("id") String id) {
+        // deletebyID 没有返回值, 不能判断数据是否存在
+        // this.repository.deleteById(id)
+        return this.repository.findById(id)
+                // 当你要操作数据, 并返回一个Mono 这个时候使用flatMap
+                // 如果不操作数据, 只是转换数据, 使用map
+                .flatMap(user -> this.repository.delete(user).then(
+                        Mono.just(new ResponseEntity<Void>(HttpStatus.OK))))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
-	/**
-	 * 修改数据 存在的时候返回200 和修改后的数据, 不存在的时候返回404
-	 */
-	@PutMapping("/{id}")
-	public Mono<ResponseEntity<User>> updateUser(@PathVariable("id") String id,
-			@Valid @RequestBody User user) {
-		CheckUtil.checkName(user.getName());
-		return this.repository.findById(id)
-				// flatMap 操作数据
-				.flatMap(u -> {
-					u.setAge(user.getAge());
-					u.setName(user.getName());
-					return this.repository.save(u);
-				})
-				// map: 转换数据
-				.map(u -> new ResponseEntity<User>(u, HttpStatus.OK))
-				.defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-	}
+    /**
+     * 修改数据 存在的时候返回200 和修改后的数据, 不存在的时候返回404
+     */
+    @PutMapping("/{id}")
+    public Mono<ResponseEntity<User>> updateUser(@PathVariable("id") String id,
+                                                 @Valid @RequestBody User user) {
+        CheckUtil.checkName(user.getName());
+        return this.repository.findById(id)
+                // flatMap 操作数据
+                .flatMap(u -> {
+                    u.setAge(user.getAge());
+                    u.setName(user.getName());
+                    return this.repository.save(u);
+                })
+                // map: 转换数据
+                .map(u -> new ResponseEntity<User>(u, HttpStatus.OK))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
-	/**
-	 * 根据ID查找用户 存在返回用户信息, 不存在返回404
-	 */
-	@GetMapping("/{id}")
-	public Mono<ResponseEntity<User>> findUserById(
-			@PathVariable("id") String id) {
-		return this.repository.findById(id)
-				.map(u -> new ResponseEntity<User>(u, HttpStatus.OK))
-				.defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-	}
+    /**
+     * 根据ID查找用户 存在返回用户信息, 不存在返回404
+     */
+    @GetMapping("/{id}")
+    public Mono<ResponseEntity<User>> findUserById(@PathVariable("id") String id) {
+        return this.repository.findById(id)
+                .map(u -> new ResponseEntity<User>(u, HttpStatus.OK))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
-	/**
-	 * 根据年龄查找用户
-	 */
-	@GetMapping("/age/{start}/{end}")
-	public Flux<User> findByAge(@PathVariable("start") int start,
-			@PathVariable("end") int end) {
-		return this.repository.findByAgeBetween(start, end);
-	}
+    /**
+     * 根据年龄查找用户
+     */
+    @GetMapping("/age/{start}/{end}")
+    public Flux<User> findByAge(@PathVariable("start") int start,@PathVariable("end") int end) {
+        return this.repository.findByAgeBetween(start, end);
+    }
 
-	/**
-	 * 根据年龄查找用户
-	 */
-	@GetMapping(value = "/stream/age/{start}/{end}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	public Flux<User> streamFindByAge(@PathVariable("start") int start,
-			@PathVariable("end") int end) {
-		return this.repository.findByAgeBetween(start, end);
-	}
-	
-	/**
-	 *  得到20-30用户
-	 */
-	@GetMapping("/old")
-	public Flux<User> oldUser() {
-		return this.repository.oldUser();
-	}
+    /**
+     * 根据年龄查找用户
+     */
+    @GetMapping(value = "/stream/age/{start}/{end}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<User> streamFindByAge(@PathVariable("start") int start,
+                                      @PathVariable("end") int end) {
+        return this.repository.findByAgeBetween(start, end);
+    }
 
-	/**
-	 * 得到20-30用户
-	 */
-	@GetMapping(value = "/stream/old", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	public Flux<User> streamOldUser() {
-		return this.repository.oldUser();
-	}
+    /**
+     * 得到20-30用户
+     */
+    @GetMapping("/old")
+    public Flux<User> oldUser() {
+        return this.repository.oldUser();
+    }
+
+    /**
+     * 得到20-30用户
+     */
+    @GetMapping(value = "/stream/old", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<User> streamOldUser() {
+        return this.repository.oldUser();
+    }
 
 }

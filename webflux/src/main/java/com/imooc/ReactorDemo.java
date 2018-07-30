@@ -10,6 +10,7 @@ import reactor.core.publisher.Flux;
 public class ReactorDemo {
 
 	public static void main(String[] args) {
+		// reactor spring官方为了支持异步事件驱动而添加的库
 		// reactor = jdk8 stream + jdk9 reactive stream
 		// Mono 0-1个元素
 		// Flux 0-N个元素
