@@ -10,9 +10,6 @@ import com.imooc.exceptions.CheckException;
 
 /**
  * 异常处理切面
- * 
- * @author 晓风轻
- *
  */
 @ControllerAdvice
 public class CheckAdvice {

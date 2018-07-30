@@ -33,8 +33,6 @@ public class UserController {
 
 	/**
 	 * 以数组形式一次性返回数据
-	 * 
-	 * @return
 	 */
 	@GetMapping("/")
 	public Flux<User> getAll() {
@@ -43,8 +41,6 @@ public class UserController {
 
 	/**
 	 * 以SSE形式多次返回数据
-	 * 
-	 * @return
 	 */
 	@GetMapping(value = "/stream/all", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<User> streamGetAll() {
@@ -53,9 +49,6 @@ public class UserController {
 
 	/**
 	 * 新增数据
-	 * 
-	 * @param user
-	 * @return
 	 */
 	@PostMapping("/")
 	public Mono<User> createUser(@Valid @RequestBody User user) {
@@ -68,9 +61,6 @@ public class UserController {
 
 	/**
 	 * 根据id删除用户 存在的时候返回200, 不存在返回404
-	 * 
-	 * @param id
-	 * @return
 	 */
 	@DeleteMapping("/{id}")
 	public Mono<ResponseEntity<Void>> deleteUser(
@@ -87,10 +77,6 @@ public class UserController {
 
 	/**
 	 * 修改数据 存在的时候返回200 和修改后的数据, 不存在的时候返回404
-	 * 
-	 * @param id
-	 * @param user
-	 * @return
 	 */
 	@PutMapping("/{id}")
 	public Mono<ResponseEntity<User>> updateUser(@PathVariable("id") String id,
@@ -110,9 +96,6 @@ public class UserController {
 
 	/**
 	 * 根据ID查找用户 存在返回用户信息, 不存在返回404
-	 * 
-	 * @param id
-	 * @return
 	 */
 	@GetMapping("/{id}")
 	public Mono<ResponseEntity<User>> findUserById(
@@ -124,10 +107,6 @@ public class UserController {
 
 	/**
 	 * 根据年龄查找用户
-	 * 
-	 * @param start
-	 * @param end
-	 * @return
 	 */
 	@GetMapping("/age/{start}/{end}")
 	public Flux<User> findByAge(@PathVariable("start") int start,
@@ -137,10 +116,6 @@ public class UserController {
 
 	/**
 	 * 根据年龄查找用户
-	 * 
-	 * @param start
-	 * @param end
-	 * @return
 	 */
 	@GetMapping(value = "/stream/age/{start}/{end}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<User> streamFindByAge(@PathVariable("start") int start,
@@ -150,7 +125,6 @@ public class UserController {
 	
 	/**
 	 *  得到20-30用户
-	 * @return
 	 */
 	@GetMapping("/old")
 	public Flux<User> oldUser() {
@@ -159,8 +133,6 @@ public class UserController {
 
 	/**
 	 * 得到20-30用户
-	 * 
-	 * @return
 	 */
 	@GetMapping(value = "/stream/old", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<User> streamOldUser() {

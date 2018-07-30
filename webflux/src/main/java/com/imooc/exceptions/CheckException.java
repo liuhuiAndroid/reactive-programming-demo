@@ -44,5 +44,4 @@ public class CheckException extends RuntimeException {
 		this.fieldValue = fieldValue;
 	}
 
-	
 }

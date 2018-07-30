@@ -33,8 +33,6 @@ public class TestController {
 
 	/**
 	 * Flux : 返回0-n个元素
-	 * 
-	 * @return
 	 */
 	@GetMapping(value = "/3", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	private Flux<String> flux() {

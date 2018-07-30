@@ -13,13 +13,10 @@ public interface UserRepository extends ReactiveMongoRepository<User, String> {
 
 	/**
 	 * 根据年龄查找用户
-	 * 
-	 * @param start
-	 * @param end
-	 * @return
 	 */
 	Flux<User> findByAgeBetween(int start, int end);
 	
 	@Query("{'age':{ '$gte': 20, '$lte' : 30}}")
 	Flux<User> oldUser();
+
 }

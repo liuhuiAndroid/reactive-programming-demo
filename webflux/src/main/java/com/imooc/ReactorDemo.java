@@ -24,7 +24,6 @@ public class ReactorDemo {
 			public void onSubscribe(Subscription subscription) {
 				// 保存订阅关系, 需要用它来给发布者响应
 				this.subscription = subscription;
-
 				// 请求一个数据
 				this.subscription.request(1);
 			}
@@ -33,16 +32,13 @@ public class ReactorDemo {
 			public void onNext(Integer item) {
 				// 接受到一个数据, 处理
 				System.out.println("接受到数据: " + item);
-
 				try {
 					TimeUnit.SECONDS.sleep(3);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				
 				// 处理完调用request再请求一个数据
 				this.subscription.request(1);
-
 				// 或者 已经达到了目标, 调用cancel告诉发布者不再接受数据了
 				// this.subscription.cancel();
 			}
@@ -51,7 +47,6 @@ public class ReactorDemo {
 			public void onError(Throwable throwable) {
 				// 出现了异常(例如处理数据的时候产生了异常)
 				throwable.printStackTrace();
-
 				// 我们可以告诉发布者, 后面不接受数据了
 				this.subscription.cancel();
 			}
@@ -69,7 +64,6 @@ public class ReactorDemo {
 		// 最终操作
 		// 这里就是jdk9的reactive stream
 		.subscribe(subscriber);
-
 	}
 
 }
